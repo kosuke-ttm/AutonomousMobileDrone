@@ -1,0 +1,13 @@
+build/
+cmake-build-*/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.DS_Store
+results/
+*.log
+.cache/
+compile_commands.json

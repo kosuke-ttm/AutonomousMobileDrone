@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ python3-dev python3-pip python3-venv
+
+      - name: Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+
+      - name: Configure and build
+        run: |
+          cmake -S . -B build
+          cmake --build build --parallel
+
+      - name: C++ tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Python tests
+        run: python3 -m pytest tests -q
+
+      - name: Run scenarios
+        run: python3 simulation/run_sim.py
+
+      - name: Upload simulation results
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulation-results
+          path: results/
